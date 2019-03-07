@@ -1,0 +1,33 @@
+﻿@using KendoGridWithCascadingComboBoxes.Models;
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@(Html.Kendo().Grid<License>()
+      .Name("Grid")        
+      .Columns(columns =>
+      {
+          columns.Bound(p => p.LicenseId).Width(20).Hidden().HeaderHtmlAttributes(new { @title = "License" });                    
+          columns.Bound(p => p.CustomerId).Width(20).HeaderHtmlAttributes(new { @title = "Customer" });
+          columns.Bound(p => p.VendorId).Width(20).HeaderHtmlAttributes(new { @title = "Vendor" });
+          columns.Bound(p => p.ProductId).Width(20).HeaderHtmlAttributes(new { @title = "Product" });
+          columns.Command(p => p.Edit().Text("Edit").HtmlAttributes(new { @title = "Edit" })).Width(80);
+      })
+      .ToolBar(toolbar => toolbar.Create().Text("Add").HtmlAttributes(new { @title = "Add" }))
+      .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("PopupEditView"))
+      .Events(e => e.Edit("onEdit"))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(model => model.Id(p => p.LicenseId))          
+              .Create(create => create.Action("Create", "Home").Type(HttpVerbs.Post))
+              .Read(read => read.Action("Read", "Home").Type(HttpVerbs.Post))
+              .Update(update => update.Action("Update", "Home").Type(HttpVerbs.Post))
+          )         
+)
+
+<script>
+    function onEdit(e) {
+        //attach validator to the PopUp window
+        $("[data-role=window]").kendoValidator();
+    }
+</script>
